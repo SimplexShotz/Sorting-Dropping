@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Example</title>
+    <!-- JQuery -->
+    <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    <style>
+      @font-face {
+        font-family: "Vera Mono";
+        src: url(VeraMono.ttf);
+      }
+      * {
+        font-family: "Roboto Light", Helvetica, Arial;
+      }
+      body {
+        background-color: rgb(255, 255, 255);
+        padding: 0px;
+        margin: 0px;
+      }
+      #container {
+        border: 1px solid rgb(200, 200, 200);
+        border-radius: 10px;
+        padding: 20px;
+        margin: 50px 25% 0px 25%;
+      }
+      .sortable {
+        border-radius: 10px;
+        background-color: rgb(50, 50, 50);
+        color: rgb(255, 255, 255);
+        padding: 10px;
+        width: calc(100% - 20px);
+        margin-bottom: 10px;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="content">
+      <div id="container"></div>
+    </div>
+
+    <script>
+      var order = [];
+      function setup() {
+        // Add the sortables:
+        for (var i = 0; i < 5; i++) {
+          document.getElementById("container").innerHTML += "<div class='sortable' id='sortable-" + i + "'>Sortable " + i + "</div>";
+          order.push(i);
+        }
+        // Make them actually sortable:
+        $("#container").sortable({
+          stop: function(e, ui) {
+            // Detect drop over another sortable:
+            var s = document.getElementById("container").childNodes;
+            var c = Number(ui.item[0].id.split("-")[1]); // this is the index of the sortable that was being moved
+            for (var i = 0; i < s.length; i++) {
+              if (order[i] !== c) { // Make sure it's not checking if the cursor is over itself
+                // Basic pixel -> rectangle collisions:
+                if (e.clientX >= s[i].offsetLeft && e.clientY >= s[i].offsetTop && e.clientX <= s[i].offsetLeft + s[i].offsetWidth && e.clientY <= s[i].offsetTop + s[i].offsetHeight) {
+                  alert("Sortable dropped over sortable " + order[i]);
+                  break;
+                }
+              }
+            }
+
+            // Re-order them:
+            for (var i = 0; i < s.length; i++) {
+              order[i] = Number(s[i].id.split("-")[1]);
+            }
+          }
+        });
+      }
+      setup();
+    </script>
+  </body>
+</html>
